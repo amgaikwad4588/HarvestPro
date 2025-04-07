@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .cart-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .cart-items {
+            margin: 20px 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .item-info {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .item-type {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .item-price {
+            font-weight: bold;
+            color: #2e7d32;
+            margin: 5px 0;
+        }
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .quantity-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .remove-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .remove-btn:hover {
+            background: #ff1744;
+        }
+        .cart-summary {
+            margin-top: 20px;
+            text-align: right;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .total {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .checkout-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        .checkout-btn:hover {
+            background: #388e3c;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .continue-shopping {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2196f3;
+            text-decoration: none;
+        }
+        .continue-shopping:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <h1>Your Shopping Cart</h1>
+        
+        {% if cart_items %}
+        <div class="cart-items">
+            {% for item in cart_items %}
+            <div class="cart-item" id="cart-item-{{ item.id }}-{{ item.type }}">
+                <div class="item-info">
+                    <div class="item-name">{{ item.name }}</div>
+                    <div class="item-type">
+                        {% if item.type == "tool" %}
+                        Tool Rental
+                        {% else %}
+                        Crop Purchase
+                        {% endif %}
+                    </div>
+                    <div class="item-price">₹{{ "%.2f"|format(item.price * item.quantity) }}</div>
+                </div>
+                
+                <div class="item-quantity">
+                    <div class="quantity-control">
+                        <button class="quantity-btn" onclick="updateQuantity('{{ item.id }}', '{{ item.type }}', -1)">-</button>
+                        <span>{{ item.quantity }}</span>
+                        <button class="quantity-btn" onclick="updateQuantity('{{ item.id }}', '{{ item.type }}', 1)">+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromCart('{{ item.id }}', '{{ item.type }}')">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="cart-summary">
+            <div class="total">Total: ₹{{ "%.2f"|format(total) }}</div>
+            <button class="checkout-btn">Proceed to Checkout</button>
+            <a href="{{ url_for('marketplace') }}" class="continue-shopping">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+        {% else %}
+        <div class="empty-cart">
+            <p>Your cart is empty</p>
+            <a href="{{ url_for('marketplace') }}" class="continue-shopping">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function removeFromCart(itemId, itemType) {
+            fetch(`/remove_from_cart/${itemId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: itemType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove item from UI
+                    document.getElementById(`cart-item-${itemId}-${itemType}`)?.remove();
+                    
+                    // Update cart counter if exists
+                    const cartCounter = document.querySelector('.cart-counter');
+                    if (cartCounter) {
+                        cartCounter.textContent = data.cart_count;
+                    }
+                    
+                    // If cart is now empty, show empty message
+                    if (data.cart_count === 0) {
+                        location.reload();
+                    }
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the item');
+            });
+        }
+
+        function updateQuantity(itemId, itemType, change) {
+            fetch('/update_cart_quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: itemId,
+                    type: itemType,
+                    change: change
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload(); // Refresh to show updated quantities
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update quantity');
+            });
+        }
+    </script>
+</body>
+</html>
