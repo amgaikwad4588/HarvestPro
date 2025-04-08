@@ -26,19 +26,20 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from datetime import timedelta
 
 from flask import session
+
 # ==============================================================================================
 
 # -------------------------LOADING THE TRAINED MODELS -----------------------------------------------
-#settingup db
+# settingup db
 app = Flask(__name__)
 # Configure Upload Folder
-UPLOAD_FOLDER = 'static/images'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+UPLOAD_FOLDER = "static/images"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
 app.secret_key = "your-very-secret-key-here"  # Change this for production
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=1)
 Session(app)
 
 # Create the folder if it doesn't exist
@@ -46,10 +47,12 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///harvestify.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///harvestify.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+
+
 class Crop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -59,6 +62,7 @@ class Crop(db.Model):
     def __repr__(self):
         return f"Crop({self.name}, {self.price}, {self.image})"
 
+
 # Tool Model
 class Tool(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -66,73 +70,80 @@ class Tool(db.Model):
     image = db.Column(db.String(100), nullable=False)
     price_per_week = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
+
+
 with app.app_context():
     # This will create all tables that don't exist
     db.create_all()
-@app.route('/check-tables')
+
+
+@app.route("/check-tables")
 def check_tables():
     with app.app_context():
         inspector = db.inspect(db.engine)
         tables = inspector.get_table_names()
         return f"Existing tables: {tables}"
-# Loading plant disease classification model
-disease_classes = ['Apple___Apple_scab',
-                   'Apple___Black_rot',
-                   'Apple___Cedar_apple_rust',
-                   'Apple___healthy',
-                   'Blueberry___healthy',
-                   'Cherry_(including_sour)___Powdery_mildew',
-                   'Cherry_(including_sour)___healthy',
-                   'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
-                   'Corn_(maize)___Common_rust_',
-                   'Corn_(maize)___Northern_Leaf_Blight',
-                   'Corn_(maize)___healthy',
-                   'Grape___Black_rot',
-                   'Grape___Esca_(Black_Measles)',
-                   'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)',
-                   'Grape___healthy',
-                   'Orange___Haunglongbing_(Citrus_greening)',
-                   'Peach___Bacterial_spot',
-                   'Peach___healthy',
-                   'Pepper,_bell___Bacterial_spot',
-                   'Pepper,_bell___healthy',
-                   'Potato___Early_blight',
-                   'Potato___Late_blight',
-                   'Potato___healthy',
-                   'Raspberry___healthy',
-                   'Soybean___healthy',
-                   'Squash___Powdery_mildew',
-                   'Strawberry___Leaf_scorch',
-                   'Strawberry___healthy',
-                   'Tomato___Bacterial_spot',
-                   'Tomato___Early_blight',
-                   'Tomato___Late_blight',
-                   'Tomato___Leaf_Mold',
-                   'Tomato___Septoria_leaf_spot',
-                   'Tomato___Spider_mites Two-spotted_spider_mite',
-                   'Tomato___Target_Spot',
-                   'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
-                   'Tomato___Tomato_mosaic_virus',
-                   'Tomato___healthy']
 
-disease_model_path = 'models/plant_disease_model.pth'
+
+# Loading plant disease classification model
+disease_classes = [
+    "Apple___Apple_scab",
+    "Apple___Black_rot",
+    "Apple___Cedar_apple_rust",
+    "Apple___healthy",
+    "Blueberry___healthy",
+    "Cherry_(including_sour)___Powdery_mildew",
+    "Cherry_(including_sour)___healthy",
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+    "Corn_(maize)___Common_rust_",
+    "Corn_(maize)___Northern_Leaf_Blight",
+    "Corn_(maize)___healthy",
+    "Grape___Black_rot",
+    "Grape___Esca_(Black_Measles)",
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "Grape___healthy",
+    "Orange___Haunglongbing_(Citrus_greening)",
+    "Peach___Bacterial_spot",
+    "Peach___healthy",
+    "Pepper,_bell___Bacterial_spot",
+    "Pepper,_bell___healthy",
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+    "Raspberry___healthy",
+    "Soybean___healthy",
+    "Squash___Powdery_mildew",
+    "Strawberry___Leaf_scorch",
+    "Strawberry___healthy",
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___healthy",
+]
+
+disease_model_path = "models/plant_disease_model.pth"
 disease_model = ResNet9(3, len(disease_classes))
-disease_model.load_state_dict(torch.load(
-    disease_model_path, map_location=torch.device('cpu')))
+disease_model.load_state_dict(
+    torch.load(disease_model_path, map_location=torch.device("cpu"))
+)
 disease_model.eval()
 
 
 # Loading crop recommendation model
 
-crop_recommendation_model_path = 'models/RandomForest.pkl'
-crop_recommendation_model = pickle.load(
-    open(crop_recommendation_model_path, 'rb'))
+crop_recommendation_model_path = "models/RandomForest.pkl"
+crop_recommendation_model = pickle.load(open(crop_recommendation_model_path, "rb"))
 
 
 # =========================================================================================
 
 # Custom functions for calculations
-
 
 
 def weather_fetch(city_name):
@@ -164,10 +175,12 @@ def predict_image(img, model=disease_model):
     :params: image
     :return: prediction (string)
     """
-    transform = transforms.Compose([
-        transforms.Resize(256),
-        transforms.ToTensor(),
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.Resize(256),
+            transforms.ToTensor(),
+        ]
+    )
     image = Image.open(io.BytesIO(img))
     img_t = transform(image)
     img_u = torch.unsqueeze(img_t, 0)
@@ -180,112 +193,127 @@ def predict_image(img, model=disease_model):
     # Retrieve the class label
     return prediction
 
+
 # ===============================================================================================
 # ------------------------------------ FLASK APP -------------------------------------------------
 
 # Route for Tool Rental
 # Make sure this is in your app.py
-app.config['UPLOAD_FOLDER'] = os.path.join('static', 'images')
-@app.route('/add_tool', methods=['GET', 'POST'])
+app.config["UPLOAD_FOLDER"] = os.path.join("static", "images")
+
+
+@app.route("/add_tool", methods=["GET", "POST"])
 def add_tool():
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
             # Validate form data
-            name = request.form.get('name')
-            price_per_week = request.form.get('price_per_week')
-            description = request.form.get('description', '')
-            
+            name = request.form.get("name")
+            price_per_week = request.form.get("price_per_week")
+            description = request.form.get("description", "")
+
             if not name or not price_per_week:
-                flash('Name and price are required', 'error')
+                flash("Name and price are required", "error")
                 return redirect(request.url)
-            
+
             try:
                 price_per_week = float(price_per_week)
             except ValueError:
-                flash('Invalid price format', 'error')
+                flash("Invalid price format", "error")
                 return redirect(request.url)
 
             # Handle image upload
-            image = request.files.get('image')
-            image_db_path = 'default.jpg'  # Default image path
-            
+            image = request.files.get("image")
+            image_db_path = "default.jpg"  # Default image path
+
             if image and image.filename:
                 # Validate file
                 filename = secure_filename(image.filename)
                 if not filename:
-                    flash('Invalid file name', 'error')
+                    flash("Invalid file name", "error")
                     return redirect(request.url)
-                
+
                 # Generate unique filename
                 unique_filename = f"{uuid.uuid4().hex}_{filename}"
-                
+
                 # Ensure upload folder exists
-                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                
+                os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
                 # Save file
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                image_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
                 image.save(image_path)
-                
+
                 # Store relative path with forward slashes
-                image_db_path = os.path.join('images', unique_filename).replace('\\', '/')
+                image_db_path = os.path.join("images", unique_filename).replace(
+                    "\\", "/"
+                )
 
             # Create and save tool
             new_tool = Tool(
                 name=name,
                 image=image_db_path,
                 price_per_week=price_per_week,
-                description=description
+                description=description,
             )
             db.session.add(new_tool)
             db.session.commit()
-            
-            flash('Tool added successfully!', 'success')
-            return redirect(url_for('marketplace'))
-            
+
+            flash("Tool added successfully!", "success")
+            return redirect(url_for("marketplace"))
+
         except Exception as e:
             db.session.rollback()
-            flash(f'Error adding tool: {str(e)}', 'error')
+            flash(f"Error adding tool: {str(e)}", "error")
             return redirect(request.url)
-    
-    return render_template('lendtool.html')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+    return render_template("lendtool.html")
+
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/migrate_images')
+
+@app.route("/migrate_images")
 def migrate_images():
     if not current_user.is_authenticated or not current_user.is_admin:
         abort(403)
-    
+
     with app.app_context():
         tools = Tool.query.all()
         for tool in tools:
-            if '\\' in tool.image:
-                tool.image = tool.image.replace('\\', '/')
+            if "\\" in tool.image:
+                tool.image = tool.image.replace("\\", "/")
         db.session.commit()
-    
-    return redirect(url_for('marketplace'))
+
+    return redirect(url_for("marketplace"))
     # ... rest of your code ...
+
+
 # debugging route
-@app.route('/debug_images')
+@app.route("/debug_images")
 def debug_images():
     tools = Tool.query.all()
     debug_info = []
     for tool in tools:
         full_path = os.path.join(app.static_folder, tool.image)
-        debug_info.append({
-            'name': tool.name,
-            'db_path': tool.image,
-            'full_path': full_path,
-            'exists': os.path.exists(full_path)
-        })
-    return render_template('debug_images.html', tools=debug_info)
+        debug_info.append(
+            {
+                "name": tool.name,
+                "db_path": tool.image,
+                "full_path": full_path,
+                "exists": os.path.exists(full_path),
+            }
+        )
+    return render_template("debug_images.html", tools=debug_info)
 
-@app.route('/lendtool')
+
+@app.route("/lendtool")
 def lendtool():
-    return render_template('lendtool.html')
+    return render_template("lendtool.html")
+
+
 # Route for Selling Crops
 @app.route("/sellcrop", methods=["GET", "POST"])
 def sellcrop():
@@ -299,14 +327,14 @@ def sellcrop():
             try:
                 price = float(price)
             except ValueError:
-                return "Invalid price format. Please enter a valid number.", 400  
+                return "Invalid price format. Please enter a valid number.", 400
 
             # Save image if uploaded
             if image_file and image_file.filename:
                 filename = f"{crop_name}.jpg"
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
                 image_file.save(image_path)
-                image_url = filename  
+                image_url = filename
             else:
                 image_url = "default.jpg"
 
@@ -316,22 +344,50 @@ def sellcrop():
             db.session.commit()
 
             return redirect(url_for("marketplace"))
-        
+
         return render_template("sellcrop.html")
 
     except Exception as e:
         print(f"Error occurred: {e}")  # Print error in terminal
         return f"Internal Server Error: {e}", 500  # Show error in browser
+#render gov scheme
+#govtschemes
+import csv
+
+import os
+
+@app.route('/govtschemes')
+def govtschemes():
+    schemes = []
+    with open('Data/government_schemes.csv', newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            website = row['Official Website'].strip()
+            if not website.startswith('http'):
+                website = 'https://' + website  # Add https if it's missing
+
+            schemes.append({
+                'scheme_id': row['Scheme ID'],
+                'name': row['Name'],
+                'objective': row['Objective'],
+                'focus_area': row['Focus Area'],
+                'financial_allocation': row['Financial Allocation'],
+                'target_crops': row['Target Crops'],
+                'region': row['Region'],
+                'soil_health_card': row['Soil Health Card'],
+                'official_website': website
+            })
+    return render_template('govtschemes.html', schemes=schemes)
 
 # render market place
-@app.route('/marketplace')
+@app.route("/marketplace")
 def marketplace():
-    # One-time migration check (remove after running once)    
     crops = Crop.query.all()
     tools = Tool.query.all()
-    return render_template('marketplace.html', crops=crops, tools=tools)
+    return render_template("marketplace.html", crops=crops, tools=tools)
 
-#delete crop button
+
+# delete crop button
 @app.route("/deletecrop/<int:crop_id>", methods=["POST"])
 def delete_crop(crop_id):
     try:
@@ -346,13 +402,19 @@ def delete_crop(crop_id):
         db.session.delete(crop)  # Remove from database
         db.session.commit()  # Save changes
 
-        return jsonify({"success": True, "message": "Crop deleted successfully!", "crop_id": crop_id})
+        return jsonify(
+            {
+                "success": True,
+                "message": "Crop deleted successfully!",
+                "crop_id": crop_id,
+            }
+        )
 
     except Exception as e:
         return jsonify({"success": False, "message": f"Error deleting crop: {e}"})
 
-#cart page 
 
+# cart page
 
 
 # Initialize cart in session
@@ -369,7 +431,10 @@ def add_to_cart():
         item_type = data.get("type", "crop")  # Default to crop
 
         if not all([item_id, item_name, item_price]):
-            return jsonify({"success": False, "message": "Missing required fields"}), 400
+            return (
+                jsonify({"success": False, "message": "Missing required fields"}),
+                400,
+            )
 
         if "cart" not in session:
             session["cart"] = []
@@ -379,27 +444,33 @@ def add_to_cart():
             if str(item["id"]) == item_id and item["type"] == item_type:
                 item["quantity"] += 1
                 session.modified = True
-                return jsonify({
-                    "success": True,
-                    "message": f"{item_name} quantity updated",
-                    "cart_count": sum(item['quantity'] for item in session["cart"])
-                })
+                return jsonify(
+                    {
+                        "success": True,
+                        "message": f"{item_name} quantity updated",
+                        "cart_count": sum(item["quantity"] for item in session["cart"]),
+                    }
+                )
 
         # Add new item
-        session["cart"].append({
-            "id": item_id,
-            "name": item_name,
-            "price": item_price,
-            "quantity": 1,
-            "type": item_type
-        })
+        session["cart"].append(
+            {
+                "id": item_id,
+                "name": item_name,
+                "price": item_price,
+                "quantity": 1,
+                "type": item_type,
+            }
+        )
         session.modified = True
 
-        return jsonify({
-            "success": True,
-            "message": f"{item_name} added to cart",
-            "cart_count": sum(item['quantity'] for item in session["cart"])
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": f"{item_name} added to cart",
+                "cart_count": sum(item["quantity"] for item in session["cart"]),
+            }
+        )
 
     except Exception as e:
         return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
@@ -412,29 +483,32 @@ def remove_from_cart(item_id):
         if not data:
             return jsonify({"success": False, "message": "No data provided"}), 400
 
-        item_type = data.get('type', 'crop')
-        
+        item_type = data.get("type", "crop")
+
         if "cart" not in session:
             return jsonify({"success": False, "message": "Cart not found"}), 400
 
         initial_count = len(session["cart"])
-        
+
         # Remove all items matching both ID and type
         session["cart"] = [
-            item for item in session["cart"]
+            item
+            for item in session["cart"]
             if not (str(item["id"]) == str(item_id) and item["type"] == item_type)
         ]
-        
+
         if len(session["cart"]) == initial_count:
             return jsonify({"success": False, "message": "Item not found in cart"}), 404
-            
+
         session.modified = True
-        return jsonify({
-            "success": True, 
-            "message": "Item removed successfully",
-            "cart_count": len(session["cart"])
-        })
-        
+        return jsonify(
+            {
+                "success": True,
+                "message": "Item removed successfully",
+                "cart_count": len(session["cart"]),
+            }
+        )
+
     except Exception as e:
         return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
@@ -444,18 +518,19 @@ def view_cart():
     try:
         cart_items = session.get("cart", [])
         total = sum(float(item["price"]) * item["quantity"] for item in cart_items)
-        
-        return render_template("cart.html", 
-                             cart_items=cart_items, 
-                             total=total,
-                             cart_count=sum(item['quantity'] for item in cart_items))
+
+        return render_template(
+            "cart.html",
+            cart_items=cart_items,
+            total=total,
+            cart_count=sum(item["quantity"] for item in cart_items),
+        )
     except Exception as e:
-        return render_template("cart.html", 
-                             cart_items=[], 
-                             total=0,
-                             error=str(e))
-    #update cart
-@app.route('/update_cart_quantity', methods=['POST'])
+        return render_template("cart.html", cart_items=[], total=0, error=str(e))
+    # update cart
+
+
+@app.route("/update_cart_quantity", methods=["POST"])
 def update_cart_quantity():
     try:
         data = request.get_json()
@@ -473,53 +548,63 @@ def update_cart_quantity():
         for item in session["cart"]:
             if str(item["id"]) == item_id and item["type"] == item_type:
                 new_quantity = item["quantity"] + change
-                
+
                 # Don't allow quantity less than 1
                 if new_quantity < 1:
-                    return jsonify({
-                        "success": False,
-                        "message": "Quantity cannot be less than 1"
-                    }), 400
-                
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "message": "Quantity cannot be less than 1",
+                            }
+                        ),
+                        400,
+                    )
+
                 item["quantity"] = new_quantity
                 session.modified = True
-                
-                return jsonify({
-                    "success": True,
-                    "message": "Quantity updated",
-                    "cart_count": sum(i['quantity'] for i in session["cart"])
-                })
+
+                return jsonify(
+                    {
+                        "success": True,
+                        "message": "Quantity updated",
+                        "cart_count": sum(i["quantity"] for i in session["cart"]),
+                    }
+                )
 
         return jsonify({"success": False, "message": "Item not found in cart"}), 404
 
     except Exception as e:
         return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+
+
 # render home page
-@ app.route('/')
+@app.route("/")
 def home():
-    title = 'Harvestify - Home'
-    return render_template('index.html', title=title)
+    title = "Harvestify - Home"
+    return render_template("index.html", title=title)
+
 
 # render crop recommendation form page
 
 
-@ app.route('/crop-recommend')
+@app.route("/crop-recommend")
 def crop_recommend():
-    title = 'Harvestify - Crop Recommendation'
-    return render_template('crop.html', title=title)
+    title = "Harvestify - Crop Recommendation"
+    return render_template("crop.html", title=title)
+
 
 # render fertilizer recommendation form page
 
 
-@ app.route('/fertilizer')
+@app.route("/fertilizer")
 def fertilizer_recommendation():
-    title = 'Harvestify - Fertilizer Suggestion'
+    title = "Harvestify - Fertilizer Suggestion"
 
-    return render_template('fertilizer.html', title=title)
+    return render_template("fertilizer.html", title=title)
+
 
 # render disease prediction input page
-
-
 
 
 # ===============================================================================================
@@ -529,16 +614,16 @@ def fertilizer_recommendation():
 # render crop recommendation result page
 
 
-@ app.route('/crop-predict', methods=['POST'])
+@app.route("/crop-predict", methods=["POST"])
 def crop_prediction():
-    title = 'Harvestify - Crop Recommendation'
+    title = "Harvestify - Crop Recommendation"
 
-    if request.method == 'POST':
-        N = int(request.form['nitrogen'])
-        P = int(request.form['phosphorous'])
-        K = int(request.form['pottasium'])
-        ph = float(request.form['ph'])
-        rainfall = float(request.form['rainfall'])
+    if request.method == "POST":
+        N = int(request.form["nitrogen"])
+        P = int(request.form["phosphorous"])
+        K = int(request.form["pottasium"])
+        ph = float(request.form["ph"])
+        rainfall = float(request.form["rainfall"])
 
         # state = request.form.get("stt")
         city = request.form.get("city")
@@ -549,30 +634,33 @@ def crop_prediction():
             my_prediction = crop_recommendation_model.predict(data)
             final_prediction = my_prediction[0]
 
-            return render_template('crop-result.html', prediction=final_prediction, title=title)
+            return render_template(
+                "crop-result.html", prediction=final_prediction, title=title
+            )
 
         else:
 
-            return render_template('try_again.html', title=title)
+            return render_template("try_again.html", title=title)
+
 
 # render fertilizer recommendation result page
 
 
-@ app.route('/fertilizer-predict', methods=['POST'])
+@app.route("/fertilizer-predict", methods=["POST"])
 def fert_recommend():
-    title = 'Harvestify - Fertilizer Suggestion'
+    title = "Harvestify - Fertilizer Suggestion"
 
-    crop_name = str(request.form['cropname'])
-    N = int(request.form['nitrogen'])
-    P = int(request.form['phosphorous'])
-    K = int(request.form['pottasium'])
+    crop_name = str(request.form["cropname"])
+    N = int(request.form["nitrogen"])
+    P = int(request.form["phosphorous"])
+    K = int(request.form["pottasium"])
     # ph = float(request.form['ph'])
 
-    df = pd.read_csv('Data/fertilizer.csv')
+    df = pd.read_csv("Data/fertilizer.csv")
 
-    nr = df[df['Crop'] == crop_name]['N'].iloc[0]
-    pr = df[df['Crop'] == crop_name]['P'].iloc[0]
-    kr = df[df['Crop'] == crop_name]['K'].iloc[0]
+    nr = df[df["Crop"] == crop_name]["N"].iloc[0]
+    pr = df[df["Crop"] == crop_name]["P"].iloc[0]
+    kr = df[df["Crop"] == crop_name]["K"].iloc[0]
 
     n = nr - N
     p = pr - P
@@ -581,49 +669,54 @@ def fert_recommend():
     max_value = temp[max(temp.keys())]
     if max_value == "N":
         if n < 0:
-            key = 'NHigh'
+            key = "NHigh"
         else:
             key = "Nlow"
     elif max_value == "P":
         if p < 0:
-            key = 'PHigh'
+            key = "PHigh"
         else:
             key = "Plow"
     else:
         if k < 0:
-            key = 'KHigh'
+            key = "KHigh"
         else:
             key = "Klow"
 
     response = Markup(str(fertilizer_dic[key]))
 
-    return render_template('fertilizer-result.html', recommendation=response, title=title)
+    return render_template(
+        "fertilizer-result.html", recommendation=response, title=title
+    )
+
 
 # render disease prediction result page
 
 
-@app.route('/disease-predict', methods=['GET', 'POST'])
+@app.route("/disease-predict", methods=["GET", "POST"])
 def disease_prediction():
-    title = 'Harvestify - Disease Detection'
+    title = "Harvestify - Disease Detection"
 
-    if request.method == 'POST':
-        if 'file' not in request.files:
+    if request.method == "POST":
+        if "file" not in request.files:
             return redirect(request.url)
-        file = request.files.get('file')
+        file = request.files.get("file")
         if not file:
-            return render_template('disease.html', title=title)
+            return render_template("disease.html", title=title)
         try:
             img = file.read()
 
             prediction = predict_image(img)
 
             prediction = Markup(str(disease_dic[prediction]))
-            return render_template('disease-result.html', prediction=prediction, title=title)
+            return render_template(
+                "disease-result.html", prediction=prediction, title=title
+            )
         except:
             pass
-    return render_template('disease.html', title=title)
+    return render_template("disease.html", title=title)
 
 
 # ===============================================================================================
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=False)
