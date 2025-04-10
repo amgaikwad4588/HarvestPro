@@ -1,111 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sell Crop | Farmer Marketplace</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            text-align: center;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sell Crop | Farmer Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4CAF50',
+            wheat: '#f5deb3',
+            rice: '#f5f5f5',
+            corn: '#ffd700',
+            cardShadow: '#d3d3d3',
+            pageBg: '#f0f0f0',
+            textColor: '#000000',
+            riceShadow: '#808080'
+          },
+          fontFamily: {
+            display: ['Poppins', 'sans-serif'],
+            body: ['Open Sans', 'sans-serif']
+          }
         }
-
-        header {
-            background-color: #4CAF50;
-            padding: 15px;
-            color: white;
-            font-size: 20px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-        }
-
-        .sell-form {
-            background: white;
-            padding: 20px;
-            margin: 30px auto;
-            width: 50%;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        input, button {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        input[type="file"] {
-            background-color: white;
-            border: none;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        footer {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
+      }
+    };
+  </script>
+  <style>
+    .animate-fade-in {
+      animation: fadeInUp 0.7s ease-out both;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
-<body>
+<body class="bg-pageBg text-textColor font-body">
 
-    <header>
-        <h1>Sell Your Crop</h1>
-        <nav>
-            <a href="marketplace.html">Marketplace</a>
-            <a href="lendtools.html">Lend Tools</a>
-            <a href="#">Contact</a>
-        </nav>
-    </header>
+  <header class="bg-primary text-white py-6 shadow-md drop-shadow-lg">
+    <div class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
+      <h1 class="text-3xl font-extrabold tracking-wide font-display">Sell Your Crop</h1>
+      <nav class="mt-4 md:mt-0 flex gap-6 text-lg font-semibold">
+        <a href="{{ url_for('marketplace') }}" class="hover:underline hover:text-yellow-300 transition">Marketplace</a>
+        <a href="{{ url_for('lendtool') }}" class="hover:underline hover:text-yellow-300 transition">Lend Tools</a>
+        <a href="#" class="hover:underline hover:text-yellow-300 transition">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-    <section class="sell-form">
-        <h2>Enter Crop Details</h2>
-        <form action="{{ url_for('sellcrop') }}" method="POST" enctype="multipart/form-data">
-            <label>Crop Name:</label>
-            <input type="text" name="crop_name" required><br>
-        
-            <label>Price (₹ per kg):</label>
-            <input type="text" name="price" required><br>
-        
-            <label>Upload Image:</label>
-            <input type="file" name="image" accept="image/*"><br>
-        
-            <button type="submit">Sell Crop</button>
-        </form>
-        
-    </section>
+  <section class="max-w-2xl mx-auto mt-12 bg-white shadow-lg shadow-cardShadow rounded-xl p-10 animate-fade-in">
+    <h2 class="text-3xl font-bold text-center text-primary mb-8 font-display tracking-wide">Enter Crop Details</h2>
+    <form action="{{ url_for('sellcrop') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
 
-    <footer>
-        <p>&copy; 2025 Farmer Marketplace | All Rights Reserved</p>
-    </footer>
+      <div>
+        <label class="block mb-2 text-lg font-semibold">Crop Name:</label>
+        <input type="text" name="crop_name" required class="w-full p-4 rounded-lg border border-gray-300 bg-rice shadow-md shadow-riceShadow focus:outline-none focus:ring-4 focus:ring-primary transition duration-300"/>
+      </div>
 
+      <div>
+        <label class="block mb-2 text-lg font-semibold">Price (₹ per kg):</label>
+        <input type="text" name="price" required class="w-full p-4 rounded-lg border border-gray-300 bg-rice shadow-md shadow-riceShadow focus:outline-none focus:ring-4 focus:ring-primary transition duration-300"/>
+      </div>
+
+      <div>
+        <label class="block mb-2 text-lg font-semibold">Upload Image:</label>
+        <label for="imageUpload" class="inline-block bg-primary text-white px-5 py-3 rounded-lg cursor-pointer font-semibold tracking-wide hover:bg-green-600 transition duration-300 shadow-md">
+          Choose File
+        </label>
+        <input type="file" id="imageUpload" name="image" accept="image/*" onchange="showFileName(this)" class="hidden" />
+        <div id="file-name" class="mt-2 text-sm italic text-gray-500">No file chosen</div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="bg-primary text-white px-8 py-4 rounded-lg text-lg font-bold uppercase tracking-wide hover:bg-green-600 transition duration-300 shadow-md">
+          Sell Crop
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <footer class="mt-16 py-6 bg-primary text-white text-center shadow-inner shadow-cardShadow">
+    <p class="text-md font-medium">&copy; 2025 Farmer Marketplace | All Rights Reserved</p>
+  </footer>
+
+  <script>
+    function showFileName(input) {
+      const fileName = input.files[0] ? input.files[0].name : "No file chosen";
+      document.getElementById("file-name").textContent = fileName;
+    }
+  </script>
 </body>
 </html>

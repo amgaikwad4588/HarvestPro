@@ -1,87 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Government Schemes</title>
-    <style>
-     body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding: 40px;
-    background: linear-gradient(to right, #e0f7fa, #e1f5fe);
-    color: #333;
-}
+  <meta charset="UTF-8">
+  <title>Government Schemes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom Color Palette */
+    :root {
+      --bg-primary: #9CAF88;
+      --text-title: #FDF9CE;
+      --heading-highlight: #FFE552;
+      --text-paragraph: #D9E2C3;
+      --card-bg: #6C7A53;
+      --border-color: #FFFFFF;
+    }
 
-h1 {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 40px;
-    color: #00796b;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-.scheme {
-    background: #ffffff;
-    padding: 25px 30px;
-    margin: 20px auto;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    max-width: 1200px; /* Increased width */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    .scheme-card {
+      transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    }
 
-
-.scheme:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-}
-
-.scheme h2 {
-    margin-top: 0;
-    color: #004d40;
-    font-size: 1.75rem;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #b2dfdb;
-    padding-bottom: 5px;
-}
-
-.scheme p {
-    margin: 10px 0;
-    line-height: 1.6;
-    font-size: 1.05rem;
-}
-
-.label {
-    font-weight: 600;
-    color: #555;
-}
-
-a {
-    color: #0288d1;
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
-
-a:hover {
-    color: #01579b;
-    text-decoration: underline;
-}
-
-    </style>
+    .scheme-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+    }
+  </style>
 </head>
-<body>
-    <h1>Government Schemes for Farmers</h1>
-    {% for scheme in schemes %}
-        <div class="scheme">
-            <h2>{{ scheme.name }}</h2>
-            <p><span class="label">Scheme ID:</span> {{ scheme.scheme_id }}</p>
-            <p><span class="label">Objective:</span> {{ scheme.objective }}</p>
-            <p><span class="label">Focus Area:</span> {{ scheme.focus_area }}</p>
-            <p><span class="label">Financial Allocation:</span> {{ scheme.financial_allocation }}</p>
-            <p><span class="label">Target Crops:</span> {{ scheme.target_crops }}</p>
-            <p><span class="label">Region:</span> {{ scheme.region }}</p>
-            <p><span class="label">Soil Health Card:</span> {{ scheme.soil_health_card }}</p>
-            <p><span class="label">Official Website:</span> <a href="{{ scheme.official_website }}" target="_blank">{{ scheme.official_website }}</a></p>
-        </div>
-    {% endfor %}
+<body class="bg-[var(--bg-primary)] text-[var(--text-paragraph)] px-6 sm:px-10 lg:px-20 py-12 font-['Poppins','Segoe UI',sans-serif] tracking-wide">
+
+  <h1 class="text-center text-4xl sm:text-5xl font-extrabold mb-12 text-[var(--text-title)] drop-shadow-lg">
+    Government Schemes for Farmers
+  </h1>
+
+  {% for scheme in schemes %}
+  <div class="scheme-card bg-[var(--card-bg)] text-[var(--text-paragraph)] border border-[var(--border-color)] rounded-2xl px-8 py-6 sm:py-8 mb-10 max-w-6xl mx-auto shadow-xl">
+    <h2 class="text-2xl sm:text-3xl font-bold text-[var(--heading-highlight)] border-b-2 border-[var(--heading-highlight)] pb-2 mb-5">
+      {{ scheme.name }}
+    </h2>
+
+    <p class="mb-2 text-lg"><span class="font-semibold text-white">Scheme ID:</span> {{ scheme.scheme_id }}</p>
+    <p class="mb-2 text-lg"><span class="font-semibold text-white">Objective:</span> {{ scheme.objective }}</p>
+    <p class="mb-2 text-lg"><span class="font-semibold text-white">Focus Area:</span> {{ scheme.focus_area }}</p>
+    <p class="mb-2 text-lg"><span class="font-semibold text-white">Financial Allocation:</span> {{ scheme.financial_allocation }}</p>
+    <p class="mb-2 text-lg"><span class="font-semibold text-white">Target Crops:</span> {{ scheme.target_crops }}</p>
+    <p class="mb-2 text-lg"><span class="font-semibold text-white">Region:</span> {{ scheme.region }}</p>
+    <p class="mb-4 text-lg"><span class="font-semibold text-white">Soil Health Card:</span> {{ scheme.soil_health_card }}</p>
+
+    <p class="text-lg"><span class="font-semibold text-white">Official Website:</span>
+      <a href="{{ scheme.official_website }}" target="_blank" class="ml-1 text-yellow-300 underline hover:text-yellow-200 transition duration-300">
+        {{ scheme.official_website }}
+      </a>
+    </p>
+  </div>
+  {% endfor %}
+
 </body>
 </html>

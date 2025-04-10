@@ -1,111 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lend Tool | Farmer Marketplace</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            text-align: center;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lend Tool | Farmer Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            pop: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            primary: '#4CAF50',
+            wheat: '#f5deb3',
+            rice: '#f5f5f5',
+            corn: '#ffd700',
+            background: '#f0f0f0',
+            shadow: '#d3d3d3',
+            darktext: '#000000',
+            grayish: '#808080',
+          },
+          animation: {
+            fade: 'fadeIn 1s ease-in-out',
+            bouncey: 'bounceIn 0.8s ease-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            bounceIn: {
+              '0%': { opacity: 0, transform: 'scale(0.95)' },
+              '100%': { opacity: 1, transform: 'scale(1)' },
+            },
+          }
         }
-
-        header {
-            background-color: #4CAF50;
-            padding: 15px;
-            color: white;
-            font-size: 20px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-        }
-
-        .lend-form {
-            background: white;
-            padding: 20px;
-            margin: 30px auto;
-            width: 50%;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        input, textarea, button {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        input[type="file"] {
-            background-color: white;
-            border: none;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        footer {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
 </head>
-<body>
-    <header>
-        <h1>Lend Your Tool</h1>
-        <nav>
-            <a href="{{ url_for('marketplace') }}">Marketplace</a>
-            <a href="{{ url_for('sellcrop') }}">Sell Crops</a>
-            <a href="{{ url_for('view_cart') }}">View Cart</a>
-        </nav>
-    </header>
 
-    <section class="lend-form">
-        <h2>Enter Tool Details</h2>
-        <form action="{{ url_for('add_tool') }}" method="POST" enctype="multipart/form-data">
-            <label>Tool Name:</label>
-            <input type="text" name="name" required><br>
-        
-            <label>Price (₹ per week):</label>
-            <input type="number" name="price_per_week" required><br>
-            
-            <label>Description:</label>
-            <textarea name="description"></textarea><br>
-        
-            <label>Upload Image:</label>
-            <input type="file" name="image" accept="image/*" required   ><br>
-        
-            <button type="submit">Lend Tool</button>
-        </form>
-    </section>
+<body class="bg-background text-darktext font-pop scroll-smooth transition-all duration-300">
 
-    <footer>
-        <p>&copy; 2025 Farmer Marketplace | All Rights Reserved</p>
-    </footer>
+  <!-- Header -->
+  <header class="bg-primary text-white py-5 shadow-lg drop-shadow-md">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between animate-fade">
+      <h1 class="text-3xl font-extrabold tracking-wide">Lend Your Tool</h1>
+      <nav class="mt-4 md:mt-0 space-x-4 text-lg font-semibold">
+        <a href="{{ url_for('marketplace') }}" class="hover:text-corn transition">Marketplace</a>
+        <a href="{{ url_for('sellcrop') }}" class="hover:text-wheat transition">Sell Crops</a>
+        <a href="{{ url_for('view_cart') }}" class="hover:text-rice transition">View Cart</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Form Section -->
+  <section class="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl px-10 py-12 mt-12 mb-12 border border-shadow animate-bouncey">
+    <h2 class="text-3xl font-bold text-center text-primary mb-10 tracking-wide">Enter Tool Details</h2>
+    <form action="{{ url_for('add_tool') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+      
+      <!-- Tool Name -->
+      <div>
+        <label class="block text-lg font-semibold mb-2">Tool Name:</label>
+        <input 
+          type="text" 
+          name="name" 
+          required 
+          class="w-full p-4 rounded-xl border border-gray-300 bg-rice focus:outline-none focus:ring-4 focus:ring-primary transition placeholder:text-grayish"
+          placeholder="e.g., Tractor, Tiller..."
+        />
+      </div>
+
+      <!-- Price -->
+      <div>
+        <label class="block text-lg font-semibold mb-2">Price (₹ per week):</label>
+        <input 
+          type="number" 
+          name="price_per_week" 
+          required 
+          class="w-full p-4 rounded-xl border border-gray-300 bg-rice focus:outline-none focus:ring-4 focus:ring-primary transition placeholder:text-grayish"
+          placeholder="Enter price in INR"
+        />
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-lg font-semibold mb-2">Description:</label>
+        <textarea 
+          name="description" 
+          rows="4"
+          class="w-full p-4 rounded-xl border border-gray-300 bg-rice focus:outline-none focus:ring-4 focus:ring-primary transition placeholder:text-grayish"
+          placeholder="Brief description of your tool..."
+        ></textarea>
+      </div>
+
+      <!-- Image Upload -->
+      <div>
+        <label class="block text-lg font-semibold mb-2">Upload Image:</label>
+        <input 
+          type="file" 
+          name="image" 
+          accept="image/*" 
+          required 
+          class="block w-full text-sm text-grayish file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:bg-primary file:text-white file:font-semibold file:transition file:hover:bg-green-600"
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center pt-4">
+        <button 
+          type="submit" 
+          class="bg-primary text-white px-8 py-4 text-lg rounded-xl font-bold tracking-wide hover:bg-green-600 shadow-md transition duration-300"
+        >
+          Lend Tool
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 bg-primary text-white mt-16 shadow-inner text-sm tracking-wide">
+    <p>&copy; 2025 Farmer Marketplace | All Rights Reserved</p>
+  </footer>
+
 </body>
 </html>

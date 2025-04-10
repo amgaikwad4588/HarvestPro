@@ -1,133 +1,127 @@
-{% extends 'layout.html' %} {% block body %}
+{% extends 'layout.html' %}
+{% block body %}
 
+<!-- Background Style -->
 <style>
-  html body {
-    background-color: rgb(206, 206, 228);
+  body {
+    background-color: #9CAF88; /* New background */
+    font-family: 'Poppins', 'sans-serif';
   }
 </style>
-<!--Form Section-->
-<br /><br />
-<h2 style="text-align: center; margin: 0px; color: black">
-  <b>Get informed advice on fertilizer based on soil</b>
-</h2>
-<br />
 
-<div
-  style="
-    width: 350px;
-    height: 40rem;
-    margin: 0px auto;
-    color: black;
-    border-radius: 25px;
-    padding: 10px 10px;
-  "
->
-  <form method="POST" action="{{ url_for('fert_recommend') }}">
-    <div class="form-group">
-      <label for="Nitrogen" style="font-size: 17px"><b>Nitrogen</b></label>
-      <input
-        type="number"
-        class="form-control"
-        id="Nitrogen"
-        name="nitrogen"
-        placeholder="Enter the value (example:50)"
-        style="font-weight: bold"
-        required
-      />
-    </div>
-    <div class="form-group">
-      <label for="Phosphorous" style="font-size: 17px"
-        ><b>Phosphorous</b></label
-      >
-      <input
-        type="number"
-        class="form-control"
-        id="Phosphorous"
-        name="phosphorous"
-        placeholder="Enter the value (example:50)"
-        style="font-weight: bold"
-        required
-      />
-    </div>
+<!-- Fertilizer Form Section -->
+<section class="py-20 px-4 sm:px-6 lg:px-8 text-[#355133] font-semibold">
+  <div class="max-w-lg mx-auto bg-[#6C7A53] backdrop-blur-lg rounded-3xl shadow-xl shadow-[#6e7e4b]/30 p-10 transition-transform duration-300 hover:scale-[1.015] border border-white">
 
-    <div class="form-group">
-      <label for="Pottasium" style="font-size: 17px"><b>Pottasium</b></label>
-      <input
-        type="number"
-        class="form-control"
-        id="Pottasium"
-        name="pottasium"
-        placeholder="Enter the value (example:50)"
-        style="font-weight: bold"
-        required
-      />
-    </div>
-    <!-- <div class="form-group">
-      <label for="ph" style="font-size: 17px"><b>ph level</b></label>
-      <input
-        type="text"
-        class="form-control"
-        id="ph"
-        name="ph"
-        placeholder="Enter the value"
-        style="font-weight: bold"
-        required
-      />
-    </div> -->
-    <div class="form-group">
-      <label for="crop" style="font-size: 17px"
-        ><b>Crop you want to grow</b></label
-      >
-      <select
-        name="cropname"
-        class="form-control"
-        id="crop"
-        placeholder="Select a crop"
-        style="font-weight: bold"
-        required
-      >
-        <option selected>Select crop</option>
-        <option>rice</option>
-        <option>maize</option>
-        <option>chickpea</option>
-        <option>kidneybeans</option>
-        <option>pigeonpeas</option>
-        <option>mothbeans</option>
-        <option>mungbean</option>
-        <option>blackgram</option>
-        <option>lentil</option>
-        <option>pomegranate</option>
-        <option>banana</option>
-        <option>mango</option>
-        <option>grapes</option>
-        <option>watermelon</option>
-        <option>muskmelon</option>
-        <option>apple</option>
-        <option>orange</option>
-        <option>papaya</option>
-        <option>coconut</option>
-        <option>cotton</option>
-        <option>jute</option>
-        <option>coffee</option>
-      </select>
-    </div>
+    <h2 class="text-center text-3xl md:text-4xl font-bold tracking-wide text-[#FDF9CE] drop-shadow-md mb-10 animate-fade-in-down">
+      Get Informed Advice on Fertilizer Based on Soil
+    </h2>
 
-    <div class="d-flex justify-content-center">
-      <button
-        type="submit"
-        class="btn btn-info"
-        style="
-          color: black;
-          font-weight: bold;
-          width: 130px;
-          height: 50px;
-          border-radius: 12px;
-          font-size: 21px;
-        "
-      >
-        Predict
-      </button>
-    </div>
-  </form>
-</div>
+    <form method="POST" action="{{ url_for('fert_recommend') }}" class="space-y-6 text-[#D9E2C3]">
+
+      <!-- Nitrogen Input -->
+      <div class="form-group">
+        <label for="Nitrogen" class="block text-lg mb-2 text-[#D9E2C3]">Nitrogen</label>
+        <input
+          type="number"
+          class="w-full px-5 py-3 rounded-xl shadow-inner bg-white text-[#355133] placeholder:text-[#6e7e4b] font-bold focus:outline-none focus:ring-4 focus:ring-[#FFE552]/60 transition-all"
+          id="Nitrogen"
+          name="nitrogen"
+          placeholder="Enter the value (example: 50)"
+          required
+        />
+      </div>
+
+      <!-- Phosphorous Input -->
+      <div class="form-group">
+        <label for="Phosphorous" class="block text-lg mb-2 text-[#D9E2C3]">Phosphorous</label>
+        <input
+          type="number"
+          class="w-full px-5 py-3 rounded-xl shadow-inner bg-white text-[#355133] placeholder:text-[#6e7e4b] font-bold focus:outline-none focus:ring-4 focus:ring-[#FFE552]/60 transition-all"
+          id="Phosphorous"
+          name="phosphorous"
+          placeholder="Enter the value (example: 50)"
+          required
+        />
+      </div>
+
+      <!-- Potassium Input -->
+      <div class="form-group">
+        <label for="Pottasium" class="block text-lg mb-2 text-[#D9E2C3]">Pottasium</label>
+        <input
+          type="number"
+          class="w-full px-5 py-3 rounded-xl shadow-inner bg-white text-[#355133] placeholder:text-[#6e7e4b] font-bold focus:outline-none focus:ring-4 focus:ring-[#FFE552]/60 transition-all"
+          id="Pottasium"
+          name="pottasium"
+          placeholder="Enter the value (example: 50)"
+          required
+        />
+      </div>
+
+      <!-- Crop Select -->
+      <div class="form-group">
+        <label for="crop" class="block text-lg mb-2 text-[#D9E2C3]">Crop you want to grow</label>
+        <select
+          name="cropname"
+          id="crop"
+          class="w-full px-5 py-3 rounded-xl bg-white text-[#355133] font-bold border border-white shadow focus:ring-4 focus:ring-[#FFE552]/60 transition-all"
+          required
+        >
+          <option selected>Select crop</option>
+          <option>rice</option>
+          <option>maize</option>
+          <option>chickpea</option>
+          <option>kidneybeans</option>
+          <option>pigeonpeas</option>
+          <option>mothbeans</option>
+          <option>mungbean</option>
+          <option>blackgram</option>
+          <option>lentil</option>
+          <option>pomegranate</option>
+          <option>banana</option>
+          <option>mango</option>
+          <option>grapes</option>
+          <option>watermelon</option>
+          <option>muskmelon</option>
+          <option>apple</option>
+          <option>orange</option>
+          <option>papaya</option>
+          <option>coconut</option>
+          <option>cotton</option>
+          <option>jute</option>
+          <option>coffee</option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center mt-8">
+        <button
+          type="submit"
+          class="bg-[#FFE552] hover:bg-yellow-500 text-[#355133] font-bold py-3 px-8 rounded-xl shadow-md hover:shadow-xl transition-all text-lg tracking-wide"
+        >
+          Predict
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Tailwind Animation (Fade-in) -->
+<style>
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 1s ease-out both;
+  }
+</style>
+
 {% endblock %}

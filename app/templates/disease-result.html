@@ -1,14 +1,94 @@
+{% extends 'layout.html' %}
+{% block body %}
 
-{% extends 'layout.html' %} {% block body %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disease Prediction Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              poppins: ['Poppins', 'sans-serif'],
+            },
+            colors: {
+              plantgreen: '#8a9863',
+              lightyellow: '#fdfdd7',
+              yellowhighlight: '#ffd944',
+              darkgreen: '#355133',
+              olivebox: '#ded6a7',
+              accentgreen: '#6e7e4b',
+            },
+            keyframes: {
+              fadeUp: {
+                '0%': { opacity: 0, transform: 'translateY(30px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' },
+              },
+              zoomIn: {
+                '0%': { transform: 'scale(0.95)', opacity: 0 },
+                '100%': { transform: 'scale(1)', opacity: 1 },
+              },
+            },
+            animation: {
+              fadeUp: 'fadeUp 0.8s ease-out',
+              zoomIn: 'zoomIn 0.6s ease-out',
+            },
+          },
+        },
+      };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  </head>
 
+  <body class="bg-plantgreen text-darkgreen font-poppins min-h-screen flex items-center justify-center px-6 py-12">
 
-<div class="container py-2 mx-auto my-50 h-10 " style="margin: 9rem;">
-  <div class="row">
-      <div class="col-sm py-2 py-md-3">
-          <div class="card card-body" style="justify-content: center; background-color:blanchedalmond">
-            <p class="text-center" style="color: black; font-size: 22px;">{{ prediction }}</p>
+    <div class="flex justify-center items-center w-full h-full">
+      <div class="max-w-3xl w-full">
+        <div class="bg-[#fdfcf5] border-2 border-accentgreen rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] p-10 space-y-10 animate-fadeUp">
+
+          <!-- Enhanced Diagnosis Result -->
+          <div class="bg-gradient-to-r from-[#ded6a7] to-[#fdfdd7] p-6 rounded-xl shadow-inner border-l-8 border-yellowhighlight animate-zoomIn">
+            <h1 class="text-4xl font-extrabold text-darkgreen tracking-wide">
+              Diagnosis Result:
+            </h1>
+            <p class="mt-4 text-2xl font-bold text-accentgreen tracking-wide">
+              {{ prediction }}
+            </p>
           </div>
+
+          <!-- Explanation -->
+          <p class="text-lg italic text-accentgreen tracking-wide px-2">
+            This result is based on the image you uploaded and the analysis performed by our plant disease detection system.
+          </p>
+
+          <!-- Next Steps Section -->
+          <div class="bg-olivebox px-6 py-5 rounded-xl space-y-5 border border-accentgreen shadow-md">
+            <h2 class="text-2xl font-bold text-darkgreen underline underline-offset-4 decoration-yellowhighlight decoration-4">
+              Next Steps
+            </h2>
+            <ul class="list-disc list-inside space-y-3 text-darkgreen text-[1.05rem] font-medium">
+              <li><span class="font-bold text-accentgreen">Fertilizer Tip:</span> Apply the fertilizer recommended for this disease to prevent spread.</li>
+              <li><span class="font-bold text-accentgreen">Expert Consultation:</span> Consider speaking to a local agricultural expert for best practices.</li>
+              <li><span class="font-bold text-accentgreen">Observation:</span> Monitor plant health regularly and keep track of changes.</li>
+              <li><span class="font-bold text-accentgreen">Record Keeping:</span> Maintain a log of treatments, images, and progress.</li>
+            </ul>
+          </div>
+
+          <!-- Optional Back Button (Optional) -->
+          <div class="flex justify-center pt-6">
+            <a href="disease.html" class="bg-yellowhighlight hover:bg-yellow-400 transition-all duration-300 text-darkgreen font-bold py-3 px-8 rounded-xl shadow-md text-lg tracking-wide">
+              Go Back
+            </a>
+          </div>
+        </div>
       </div>
-  </div>
-</div>
+    </div>
+
+  </body>
+</html>
+
 {% endblock %}

@@ -1,54 +1,96 @@
-{% extends 'layout.html' %} {% block body %}
+{% extends 'layout.html' %}
+{% block body %}
 
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Disease Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              poppins: ['Poppins', 'sans-serif'],
+            },
+            colors: {
+              bgbase: '#9CAF88',
+              titletext: '#F0F5E4', // updated
+              highlight: '#B5D99C', // updated
+              paragraph: '#D9E2C3',
+              cardbg: '#6C7A53',
+              borderwhite: '#FFFFFF',
+            },
+            keyframes: {
+              fadeUp: {
+                '0%': { opacity: 0, transform: 'translateY(20px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' },
+              },
+              pulseGrow: {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' },
+              },
+            },
+            animation: {
+              fadeUp: 'fadeUp 0.8s ease-out',
+              pulseGrow: 'pulseGrow 2s ease-in-out infinite',
+            },
+          },
+        },
+      };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  </head>
 
-<style>
-  html body {
-    background-color: rgb(206, 206, 228);
-  }
-</style>
-<br /><br />
-  <h2 style="text-align: center; margin: 0px; color: black">
-    <b>Find out which disease has been caught by your plant</b>
-  </h2>
-  <br />
-  <br>
+  <body class="bg-bgbase font-poppins text-paragraph min-h-screen">
 
-<div style="
-    width: 350px;
-    height: 50rem;
-    margin: 0px auto;
-    color: black;
-    border-radius: 25px;
-    padding: 10px 10px;
-    font-weight: bold;
-  ">
+    <div class="container mx-auto px-6 py-10">
+      
+      <h2 class="text-center text-3xl md:text-4xl font-bold text-cardbg tracking-wide animate-fadeUp">
+        Find out which disease has been caught by your plant
+      </h2>
 
-  
+      <div class="mt-12 max-w-md md:max-w-lg mx-auto bg-cardbg text-paragraph border-2 border-borderwhite rounded-3xl shadow-2xl p-8 animate-fadeUp transition-all duration-500">
 
+        <form class="form-signin space-y-6" method="post" enctype="multipart/form-data">
 
-  <form class="form-signin" method=post enctype=multipart/form-data>
+          <h2 class="text-2xl font-bold text-titletext tracking-wider">Please Upload The Image</h2>
 
-    <h2 class="h4 mb-3 font-weight-normal"><b>Please Upload The Image</b></h2>
-    <input type="file" name="file" class="form-control-file" id="inputfile" onchange="preview_image(event)" style="font-weight: bold;">
-    <br>
-    <br>
-    <img id="output-image" class="rounded mx-auto d-block" />
-    <button class="btn btn-lg btn-primary btn-block" type="submit" style="font-weight: bold;">Predict</button>
+          <input
+            type="file"
+            name="file"
+            class="block w-full text-sm text-paragraph bg-paragraph border border-borderwhite rounded-xl px-4 py-3 font-semibold shadow-inner file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-highlight file:text-paragraph hover:file:bg-[#A4CB89] transition duration-300"
+            id="inputfile"
+            onchange="preview_image(event)"
+          />
 
+          <div class="flex justify-center">
+            <img id="output-image" class="mt-4 rounded-xl shadow-lg max-h-64 animate-pulseGrow border border-titletext" />
+          </div>
 
-  </form>
-</div>
+          <button
+            class="w-full bg-highlight hover:bg-[#A4CB89] text-cardbg font-bold py-3 rounded-xl shadow-lg transition-all duration-300 text-lg tracking-wide"
+            type="submit"
+          >
+            Predict
+          </button>
 
-<script type="text/javascript">
-  function preview_image(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      var output = document.getElementById('output-image')
-      output.src = reader.result;
-    }
-    reader.readAsDataURL(event.target.files[0]);
-  }
-</script>
+        </form>
+      </div>
+    </div>
 
-</div>
+    <script type="text/javascript">
+      function preview_image(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          var output = document.getElementById('output-image');
+          output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+      }
+    </script>
+  </body>
+</html>
+
 {% endblock %}

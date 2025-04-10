@@ -1,17 +1,96 @@
-{% extends 'layout.html' %} {% block body %}
+{% extends 'layout.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fertilizer Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              poppins: ['Poppins', 'sans-serif'],
+            },
+            colors: {
+              plantgreen: '#8a9863',
+              lightyellow: '#fdfdd7',
+              yellowhighlight: '#ffd944',
+              darkgreen: '#355133',
+              olivebox: '#ded6a7',
+              accentgreen: '#6e7e4b',
+              darkbg: '#1a1a1a',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: 0, transform: 'translateY(30px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' },
+              },
+              pop: {
+                '0%': { transform: 'scale(0.9)' },
+                '100%': { transform: 'scale(1)' },
+              },
+            },
+            animation: {
+              fadeInUp: 'fadeInUp 1s ease-out forwards',
+              pop: 'pop 0.4s ease-out forwards',
+            },
+          },
+        },
+      };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  </head>
 
+  <body class="bg-plantgreen dark:bg-darkbg text-darkgreen dark:text-lightyellow font-poppins transition-all duration-300 ease-in-out">
+    <div class="flex items-center justify-center min-h-screen px-6 py-12">
+      <div class="bg-[#fdfcf5] dark:bg-[#1f2a21] rounded-3xl shadow-2xl shadow-accentgreen/40 p-10 max-w-3xl w-full text-center transform transition hover:scale-[1.02] duration-300 animate-fadeInUp">
 
+        <!-- Title -->
+        <h2 class="text-4xl md:text-5xl font-extrabold text-darkgreen dark:text-yellowhighlight mb-6 tracking-wider drop-shadow-md">
+          Fertilizer Recommendation
+        </h2>
 
+        <!-- Result -->
+        <div class="bg-olivebox dark:bg-green-800 text-darkgreen dark:text-lightyellow text-2xl md:text-3xl font-bold py-6 px-8 rounded-2xl shadow-inner shadow-[#6e7e4b]/40 mb-8 animate-pop transition-all duration-300">
+          {{ recommendation }}
+        </div>
 
+        <!-- Explanation -->
+        <div class="text-lg text-[#355133] dark:text-gray-200 leading-relaxed space-y-5 px-4 md:px-8">
+          <p class="italic">
+            This result is based on the provided soil data and the analysis made by our system.
+          </p>
+          <p>
+            <span class="font-semibold text-yellowhighlight dark:text-yellow-300">Next Steps:</span>
+            Consult with a local expert or agronomist to validate and fine-tune the fertilizer recommendation for your specific field conditions.
+          </p>
+        </div>
 
-
-<div class="container py-2 mx-auto my-50 h-10 " style="margin: 9rem;">
-  <div class="row">
-      <div class="col-sm py-2 py-md-3">
-          <div class="card card-body" style="justify-content: center; background-color:blanchedalmond">
-               <p class="text-center" style="color: black; font-size: 20px;">{{ recommendation }}</p>
-          </div>
+        <!-- Call to Action -->
+        <div class="mt-10">
+          <a
+            href="{{ url_for('home') }}"
+            class="inline-block bg-yellowhighlight hover:bg-yellow-500 text-darkgreen font-bold py-3 px-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 text-lg tracking-wide"
+          >
+            Back to Home
+          </a>
+        </div>
       </div>
-  </div>
-</div>
+    </div>
+
+    <!-- Optional Dark Mode Toggle
+    <div class="fixed bottom-6 right-6">
+      <button
+        onclick="document.documentElement.classList.toggle('dark')"
+        class="bg-[#ded6a7] dark:bg-[#2e3b2d] hover:bg-[#cfc79d] dark:hover:bg-[#3d4f3b] text-sm text-darkgreen dark:text-lightyellow px-4 py-2 rounded-lg shadow-md transition duration-300 font-semibold"
+      >
+        Toggle Dark Mode
+      </button>
+    </div> -->
+  </body>
+</html>
 {% endblock %}
