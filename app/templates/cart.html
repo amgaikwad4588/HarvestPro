@@ -1,165 +1,208 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shopping Cart</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            poppins: ['Poppins', 'sans-serif'],
-          },
-          colors: {
-            greenAccent: '#4CAF50',
-            card: '#ffffff',
-            base: '#f0f0f0',
-            shadow: '#d3d3d3',
-            corn: '#ffd700',
-            wheat: '#f5deb3',
-            rice: '#f5f5f5',
-            riceShadow: '#808080',
-            black: '#000000',
-          },
-          keyframes: {
-            fadeInUp: {
-              '0%': { opacity: 0, transform: 'translateY(20px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' },
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              poppins: ["Poppins", "sans-serif"],
             },
-            scaleIn: {
-              '0%': { transform: 'scale(0.95)', opacity: 0 },
-              '100%': { transform: 'scale(1)', opacity: 1 },
+            colors: {
+              greenAccent: "#6c7a53",
+              card: "#ffffff",
+              base: "#85976e",
+              shadow: "#d3d3d3",
+              corn: "#ffd700",
+              wheat: "#f5deb3",
+              rice: "#f5f5f5",
+              riceShadow: "#808080",
+              black: "#000000",
             },
-          },
-          animation: {
-            fadeInUp: 'fadeInUp 0.7s ease-out',
-            scaleIn: 'scaleIn 0.4s ease-in-out',
+            keyframes: {
+              fadeInUp: {
+                "0%": { opacity: 0, transform: "translateY(20px)" },
+                "100%": { opacity: 1, transform: "translateY(0)" },
+              },
+              scaleIn: {
+                "0%": { transform: "scale(0.95)", opacity: 0 },
+                "100%": { transform: "scale(1)", opacity: 1 },
+              },
+            },
+            animation: {
+              fadeInUp: "fadeInUp 0.7s ease-out",
+              scaleIn: "scaleIn 0.4s ease-in-out",
+            },
           },
         },
-      },
-    };
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-</head>
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
 
-<body class="bg-base font-poppins text-black min-h-screen py-10 px-4">
+  <body class="bg-base font-poppins text-black min-h-screen py-10 px-4">
+    <div
+      class="max-w-5xl mx-auto bg-card shadow-2xl rounded-3xl p-8 border border-shadow animate-scaleIn"
+    >
+      <h1
+        class="text-4xl font-extrabold text-greenAccent text-center mb-10 tracking-wide animate-fadeInUp"
+      >
+        Your Shopping Cart
+      </h1>
 
-  <div class="max-w-5xl mx-auto bg-card shadow-2xl rounded-3xl p-8 border border-shadow animate-scaleIn">
-    <h1 class="text-4xl font-extrabold text-greenAccent text-center mb-10 tracking-wide animate-fadeInUp">
-      Your Shopping Cart
-    </h1>
-
-    {% if cart_items %}
-    <div class="space-y-6">
-      {% for item in cart_items %}
-      <div class="flex flex-col md:flex-row justify-between items-center border-b border-gray-200 pb-6 md:pb-4 animate-fadeInUp" id="cart-item-{{ item.id }}-{{ item.type }}">
-        <div class="flex-1 w-full mb-4 md:mb-0">
-          <div class="text-xl font-bold">{{ item.name }}</div>
-          <div class="text-sm mt-1 {% if item.type == 'tool' %}text-wheat{% else %}text-corn{% endif %}">
-            {% if item.type == "tool" %}
-            Tool Rental
-            {% else %}
-            Crop Purchase
-            {% endif %}
+      {% if cart_items %}
+      <div class="space-y-6">
+        {% for item in cart_items %}
+        <div
+          class="flex flex-col md:flex-row justify-between items-center border-b border-gray-200 pb-6 md:pb-4 animate-fadeInUp"
+          id="cart-item-{{ item.id }}-{{ item.type }}"
+        >
+          <div class="flex-1 w-full mb-4 md:mb-0">
+            <div class="text-xl font-bold">{{ item.name }}</div>
+            <div
+              class="text-sm mt-1 {% if item.type == 'tool' %}text-wheat{% else %}text-corn{% endif %}"
+            >
+              {% if item.type == "tool" %} Tool Rental {% else %} Crop Purchase
+              {% endif %}
+            </div>
+            <div class="mt-2 text-greenAccent font-semibold text-lg">
+              ₹{{ "%.2f"|format(item.price * item.quantity) }}
+            </div>
           </div>
-          <div class="mt-2 text-greenAccent font-semibold text-lg">₹{{ "%.2f"|format(item.price * item.quantity) }}</div>
-        </div>
 
-        <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <div class="flex items-center gap-3 bg-base px-3 py-2 rounded-full shadow-inner border border-shadow">
-            <button class="w-8 h-8 rounded-full bg-gray-200 hover:bg-shadow font-bold transition" onclick="updateQuantity('{{ item.id }}', '{{ item.type }}', -1)">-</button>
-            <span class="font-semibold text-lg">{{ item.quantity }}</span>
-            <button class="w-8 h-8 rounded-full bg-gray-200 hover:bg-shadow font-bold transition" onclick="updateQuantity('{{ item.id }}', '{{ item.type }}', 1)">+</button>
+          <div
+            class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto"
+          >
+            <div
+              class="flex items-center gap-3 bg-base px-3 py-2 rounded-full shadow-inner border border-shadow"
+            >
+              <button
+                class="w-8 h-8 rounded-full bg-gray-200 hover:bg-shadow font-bold transition"
+                onclick="updateQuantity('{{ item.id }}', '{{ item.type }}', -1)"
+              >
+                -
+              </button>
+              <span class="font-semibold text-lg">{{ item.quantity }}</span>
+              <button
+                class="w-8 h-8 rounded-full bg-gray-200 hover:bg-shadow font-bold transition"
+                onclick="updateQuantity('{{ item.id }}', '{{ item.type }}', 1)"
+              >
+                +
+              </button>
+            </div>
+
+            <button
+              class="px-5 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl shadow-md transition-all duration-300"
+              onclick="removeFromCart('{{ item.id }}', '{{ item.type }}')"
+            >
+              <i class="fas fa-trash mr-1"></i> Remove
+            </button>
           </div>
-
-          <button class="px-5 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl shadow-md transition-all duration-300" onclick="removeFromCart('{{ item.id }}', '{{ item.type }}')">
-            <i class="fas fa-trash mr-1"></i> Remove
-          </button>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
+
+      <div class="mt-10 pt-8 border-t border-gray-300 text-right">
+        <div class="text-2xl font-bold mb-4">
+          Total:
+          <span class="text-greenAccent">₹{{ "%.2f"|format(total) }}</span>
+        </div>
+        <button
+          class="bg-greenAccent hover:bg-green-600 text-white px-8 py-3 rounded-xl text-lg font-semibold shadow-lg transition-all duration-300"
+        >
+          Proceed to Checkout
+        </button>
+        <a
+          href="{{ url_for('marketplace') }}"
+          class="ml-6 inline-block text-greenAccent font-semibold text-md hover:underline transition"
+        >
+          <i class="fas fa-arrow-left mr-1"></i> Continue Shopping
+        </a>
+      </div>
+
+      {% else %}
+      <div class="text-center py-20 animate-fadeInUp">
+        <p class="text-xl font-medium text-gray-600">Your cart is empty</p>
+        <a
+          href="{{ url_for('marketplace') }}"
+          class="mt-6 inline-block text-greenAccent font-semibold text-md hover:underline transition"
+        >
+          <i class="fas fa-arrow-left mr-1"></i> Continue Shopping
+        </a>
+      </div>
+      {% endif %}
     </div>
 
-    <div class="mt-10 pt-8 border-t border-gray-300 text-right">
-      <div class="text-2xl font-bold mb-4">Total: <span class="text-greenAccent">₹{{ "%.2f"|format(total) }}</span></div>
-      <button class="bg-greenAccent hover:bg-green-600 text-white px-8 py-3 rounded-xl text-lg font-semibold shadow-lg transition-all duration-300">
-        Proceed to Checkout
-      </button>
-      <a href="{{ url_for('marketplace') }}" class="ml-6 inline-block text-greenAccent font-semibold text-md hover:underline transition">
-        <i class="fas fa-arrow-left mr-1"></i> Continue Shopping
-      </a>
-    </div>
-
-    {% else %}
-    <div class="text-center py-20 animate-fadeInUp">
-      <p class="text-xl font-medium text-gray-600">Your cart is empty</p>
-      <a href="{{ url_for('marketplace') }}" class="mt-6 inline-block text-greenAccent font-semibold text-md hover:underline transition">
-        <i class="fas fa-arrow-left mr-1"></i> Continue Shopping
-      </a>
-    </div>
-    {% endif %}
-  </div>
-
-  <script>
-    function removeFromCart(itemId, itemType) {
-      fetch(`/remove_from_cart/${itemId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: itemType
+    <script>
+      function removeFromCart(itemId, itemType) {
+        fetch(`/remove_from_cart/${itemId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: itemType,
+          }),
         })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById(`cart-item-${itemId}-${itemType}`)?.remove();
-          const cartCounter = document.querySelector('.cart-counter');
-          if (cartCounter) {
-            cartCounter.textContent = data.cart_count;
-          }
-          if (data.cart_count === 0) {
-            location.reload();
-          }
-        } else {
-          alert('Error: ' + data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while removing the item');
-      });
-    }
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              document
+                .getElementById(`cart-item-${itemId}-${itemType}`)
+                ?.remove();
+              const cartCounter = document.querySelector(".cart-counter");
+              if (cartCounter) {
+                cartCounter.textContent = data.cart_count;
+              }
+              if (data.cart_count === 0) {
+                location.reload();
+              }
+            } else {
+              alert("Error: " + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred while removing the item");
+          });
+      }
 
-    function updateQuantity(itemId, itemType, change) {
-      fetch('/update_cart_quantity', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: itemId,
-          type: itemType,
-          change: change
+      function updateQuantity(itemId, itemType, change) {
+        fetch("/update_cart_quantity", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: itemId,
+            type: itemType,
+            change: change,
+          }),
         })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        } else {
-          alert(data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to update quantity');
-      });
-    }
-  </script>
-</body>
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              location.reload();
+            } else {
+              alert(data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Failed to update quantity");
+          });
+      }
+    </script>
+  </body>
 </html>

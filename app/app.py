@@ -350,34 +350,40 @@ def sellcrop():
     except Exception as e:
         print(f"Error occurred: {e}")  # Print error in terminal
         return f"Internal Server Error: {e}", 500  # Show error in browser
-#render gov scheme
-#govtschemes
+
+
+# render gov scheme
+# govtschemes
 import csv
 
 import os
 
-@app.route('/govtschemes')
+
+@app.route("/govtschemes")
 def govtschemes():
     schemes = []
-    with open('Data/government_schemes.csv', newline='', encoding='utf-8') as csvfile:
+    with open("Data/government_schemes.csv", newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            website = row['Official Website'].strip()
-            if not website.startswith('http'):
-                website = 'https://' + website  # Add https if it's missing
+            website = row["Official Website"].strip()
+            if not website.startswith("http"):
+                website = "https://" + website  # Add https if it's missing
 
-            schemes.append({
-                'scheme_id': row['Scheme ID'],
-                'name': row['Name'],
-                'objective': row['Objective'],
-                'focus_area': row['Focus Area'],
-                'financial_allocation': row['Financial Allocation'],
-                'target_crops': row['Target Crops'],
-                'region': row['Region'],
-                'soil_health_card': row['Soil Health Card'],
-                'official_website': website
-            })
-    return render_template('govtschemes.html', schemes=schemes)
+            schemes.append(
+                {
+                    "scheme_id": row["Scheme ID"],
+                    "name": row["Name"],
+                    "objective": row["Objective"],
+                    "focus_area": row["Focus Area"],
+                    "financial_allocation": row["Financial Allocation"],
+                    "target_crops": row["Target Crops"],
+                    "region": row["Region"],
+                    "soil_health_card": row["Soil Health Card"],
+                    "official_website": website,
+                }
+            )
+    return render_template("govtschemes.html", schemes=schemes)
+
 
 # render market place
 @app.route("/marketplace")
@@ -474,6 +480,19 @@ def add_to_cart():
 
     except Exception as e:
         return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+
+
+from flask import jsonify
+
+
+@app.route("/delete_tool/<int:tool_id>", methods=["DELETE"])
+def delete_tool(tool_id):
+    tool = Tool.query.get(tool_id)
+    if tool:
+        db.session.delete(tool)
+        db.session.commit()
+        return jsonify({"success": True, "message": "Tool deleted successfully"})
+    return jsonify({"success": False, "message": "Tool not found"}), 404
 
 
 @app.route("/remove_from_cart/<item_id>", methods=["POST"])
