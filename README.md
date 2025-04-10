@@ -38,7 +38,7 @@ Harvestify is a full-stack web application that bridges the gap between farmers 
 ## 🛠 How to Run Locally
 
 ### 1️⃣ Clone the Repository
-git clone https://github.com/amgaikwad4588/Harvestify.git
+git clone https://github.com/amgaikwad4588/HarvestPro.git
 cd Harvestify
 
 ### 2️⃣ Create a Virtual Environment
