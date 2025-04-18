@@ -172,6 +172,25 @@
       </div>
     </footer>
 
+      <!-- Chatbot Toggle Button -->
+<div class="chatbot-toggler">
+  💬
+</div>
+
+<!-- Chatbot Popup Window -->
+<div class="chatbot">
+  <header>
+      <h2>HarvestBot</h2>
+      <span class="close-btn material-symbols-rounded">close</span>
+  </header>
+  <ul class="chatbox"></ul>
+  <div class="chat-input">
+      <textarea placeholder="Ask something..." spellcheck="false" required></textarea>
+      <span class="material-symbols-rounded">send</span>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+
     <!-- Scroll to Top -->
     <!-- <a
       href="#home"
