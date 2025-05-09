@@ -8,7 +8,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // ✅ Use your OpenRouter API Key here
-const API_KEY = "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"; 
+const API_KEY =
+  "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";
 
 app.post("/chat", async (req, res) => {
   const message = req.body.message;
@@ -23,16 +24,19 @@ app.post("/chat", async (req, res) => {
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${API_KEY}`,
+          Authorization: `Bearer ${API_KEY}`,
           "HTTP-Referer": "http://localhost:3000", // Replace with your frontend URL if deployed
-          "X-Title": "My Chat App"
+          "X-Title": "My Chat App",
         },
       }
     );
 
     res.json({ reply: response.data.choices[0].message.content });
   } catch (error) {
-    console.error("Error from OpenRouter:", error.response?.data || error.message);
+    console.error(
+      "Error from OpenRouter:",
+      error.response?.data || error.message
+    );
     res.status(500).json({ error: "Something went wrong!" });
   }
 });

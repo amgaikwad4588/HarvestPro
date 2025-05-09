@@ -1,5 +1,8 @@
 # Importing essential libraries and modules
-
+import urllib.parse
+import requests
+from config import weather_api_key
+import urllib.parse  # Add this with your other imports
 from flask import Flask, render_template, request, Markup
 import numpy as np
 import pandas as pd
@@ -146,26 +149,40 @@ crop_recommendation_model = pickle.load(open(crop_recommendation_model_path, "rb
 # Custom functions for calculations
 
 
+import urllib.parse
+import requests
+from config import weather_api_key
+
 def weather_fetch(city_name):
     """
-    Fetch and returns the temperature and humidity of a city
-    :params: city_name
-    :return: temperature, humidity
+    Fetch temperature and humidity for a city
+    Returns: (temperature, humidity) or None if failed
     """
-    api_key = config.weather_api_key
-    base_url = "http://api.openweathermap.org/data/2.5/weather?"
-
-    complete_url = base_url + "appid=" + api_key + "&q=" + city_name
-    response = requests.get(complete_url)
-    x = response.json()
-
-    if x["cod"] != "404":
-        y = x["main"]
-
-        temperature = round((y["temp"] - 273.15), 2)
-        humidity = y["humidity"]
-        return temperature, humidity
-    else:
+    try:
+        # URL-encode the city name to handle spaces/special chars
+        encoded_city = urllib.parse.quote(city_name.strip())
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={encoded_city}&appid={weather_api_key}"
+        
+        response = requests.get(url)
+        response.raise_for_status()  # Raises HTTPError for bad responses
+        
+        data = response.json()
+        
+        if data.get("cod") != 200:
+            print(f"API Error: {data.get('message')}")
+            return None
+            
+        temp_kelvin = data["main"]["temp"]
+        humidity = data["main"]["humidity"]
+        temp_celsius = round(temp_kelvin - 273.15, 2)
+        
+        return temp_celsius, humidity
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {str(e)}")
+        return None
+    except KeyError as e:
+        print(f"Missing data in response: {str(e)}")
         return None
 
 
@@ -636,32 +653,67 @@ def fertilizer_recommendation():
 @app.route("/crop-predict", methods=["POST"])
 def crop_prediction():
     title = "Harvestify - Crop Recommendation"
-
+    
     if request.method == "POST":
-        N = int(request.form["nitrogen"])
-        P = int(request.form["phosphorous"])
-        K = int(request.form["pottasium"])
-        ph = float(request.form["ph"])
-        rainfall = float(request.form["rainfall"])
-
-        # state = request.form.get("stt")
-        city = request.form.get("city")
-
-        if weather_fetch(city) != None:
-            temperature, humidity = weather_fetch(city)
+        try:
+            N = int(request.form["nitrogen"])
+            P = int(request.form["phosphorous"])
+            K = int(request.form["pottasium"])
+            ph = float(request.form["ph"])
+            rainfall = float(request.form["rainfall"])
+            city = request.form.get("city", "").strip()
+            
+            if not city:
+                flash("Please enter a city name", "error")
+                return redirect(url_for('crop_recommend'))
+            
+            weather_data = weather_fetch(city)
+            if weather_data is None:
+                flash("Weather service unavailable. Please try again later.", "error")
+                return redirect(url_for('crop_recommend'))
+                
+            temperature, humidity = weather_data
             data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
-            my_prediction = crop_recommendation_model.predict(data)
-            final_prediction = my_prediction[0]
+            prediction = crop_recommendation_model.predict(data)[0]
+            
+            return render_template("crop-result.html", 
+                                 prediction=prediction, 
+                                 title=title)
+                                 
+        except ValueError:
+            flash("Invalid input values", "error")
+            return redirect(url_for('crop_recommend'))
+        
+        import urllib.parse
 
-            return render_template(
-                "crop-result.html", prediction=final_prediction, title=title
-            )
-
-        else:
-
-            return render_template("try_again.html", title=title)
-
-
+def weather_fetch(city_name):
+    api_key = config.weather_api_key
+    base_url = "http://api.openweathermap.org/data/2.5/weather?"
+    
+    # Properly encode the city name
+    encoded_city = urllib.parse.quote(city_name.strip())
+    complete_url = f"{base_url}appid={api_key}&q={encoded_city}"
+    
+    try:
+        response = requests.get(complete_url)
+        response.raise_for_status()  # Raises HTTPError for bad responses
+        data = response.json()
+        
+        if data.get("cod") != 200:
+            print(f"API Error: {data.get('message')}")
+            return None
+            
+        main_data = data["main"]
+        temperature = round(main_data["temp"] - 273.15, 2)  # Kelvin to Celsius
+        humidity = main_data["humidity"]
+        return temperature, humidity
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {str(e)}")
+        return None
+    except KeyError as e:
+        print(f"Missing data in response: {str(e)}")
+        return None
 # render fertilizer recommendation result page
 
 
@@ -738,4 +790,4 @@ def disease_prediction():
 
 # ===============================================================================================
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
